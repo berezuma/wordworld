@@ -53,9 +53,9 @@
                 <p class="text-blue-400 font-semibold tracking-wide uppercase text-xs md:text-sm">Spelling Adventure</p>
             </div>
             
-            <!-- Global Score Display -->
+            <!-- Global Score Display (Resets on reload) -->
             <div class="order-1 md:order-2 md:absolute md:top-0 md:right-0 bg-white px-4 py-2 rounded-2xl shadow-md border-2 border-yellow-400 min-w-[100px]">
-                <span class="text-gray-500 text-[10px] md:text-xs font-bold block uppercase leading-none mb-1">Points</span>
+                <span class="text-gray-500 text-[10px] md:text-xs font-bold block uppercase leading-none mb-1">Session Points</span>
                 <span id="global-score-display" class="text-xl md:text-2xl font-black text-yellow-600 leading-none">0</span>
             </div>
         </header>
@@ -65,7 +65,7 @@
             <button onclick="setPlayMode('adventure')" class="flex-1 bg-white p-6 md:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all border-4 border-transparent hover:border-blue-500 group">
                 <div class="text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">🗺️</div>
                 <h3 class="text-xl md:text-2xl font-bold text-blue-600 mb-2">Adventure Mode</h3>
-                <p class="text-sm md:text-base text-gray-500">Step by step. Unlock words with points!</p>
+                <p class="text-sm md:text-base text-gray-500">Step by step. Unlock worlds by playing!</p>
             </button>
             <button onclick="setPlayMode('free')" class="flex-1 bg-white p-6 md:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all border-4 border-transparent hover:border-green-500 group">
                 <div class="text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">🚀</div>
@@ -162,12 +162,22 @@
         ];
 
         let currentPlayMode = null; 
+        let currentLevelWords = []; // Randomly shuffled words for the active session
         let currentLevel = null;
         let currentIndex = 0;
         let currentMode = ''; 
         let unlockedLevels = parseInt(localStorage.getItem('unlockedLevels')) || 1;
-        let globalScore = parseInt(localStorage.getItem('globalScore')) || 0;
+        let globalScore = 0; // Resets on load
         const audioPath = './audios/';
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
 
         function updateGlobalScoreDisplay() {
             const display = document.getElementById('global-score-display');
@@ -179,7 +189,6 @@
 
         function addPoints(points) {
             globalScore += points;
-            localStorage.setItem('globalScore', globalScore);
             updateGlobalScoreDisplay();
         }
 
@@ -232,6 +241,8 @@
 
         function startGame(levelId, mode) {
             currentLevel = levels.find(l => l.id === levelId);
+            // Randomize words for this specific session
+            currentLevelWords = shuffleArray(currentLevel.words);
             currentMode = mode;
             currentIndex = 0;
             
@@ -253,13 +264,13 @@
         }
 
         function showWord() {
-            const total = currentLevel.words.length;
+            const total = currentLevelWords.length;
             document.getElementById('counter').innerText = `${currentIndex + 1} / ${total}`;
             document.getElementById('progress-bar').style.width = `${((currentIndex) / total) * 100}%`;
             document.getElementById('feedback').innerHTML = '';
             
             if (currentMode === 'practice') {
-                document.getElementById('word-display').innerText = currentLevel.words[currentIndex];
+                document.getElementById('word-display').innerText = currentLevelWords[currentIndex];
             } else {
                 document.getElementById('answer-input').value = '';
                 document.getElementById('answer-input').focus();
@@ -269,14 +280,15 @@
 
         function playCurrentAudio() {
             const player = document.getElementById('audio-player');
-            const cleanWord = currentLevel.words[currentIndex].toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const wordToPlay = currentLevelWords[currentIndex];
+            const cleanWord = wordToPlay.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             player.src = `${audioPath}${cleanWord}.mp3`;
             player.play().catch(() => showFeedback("⚠️ Audio not found", "text-orange-400"));
         }
 
         function checkAnswer() {
             const userAnswer = document.getElementById('answer-input').value.trim().toLowerCase();
-            const correctAnswer = currentLevel.words[currentIndex].toLowerCase().trim();
+            const correctAnswer = currentLevelWords[currentIndex].toLowerCase().trim();
 
             if (userAnswer === correctAnswer) {
                 showFeedback("Great! +10 🌟", "text-green-500");
@@ -297,7 +309,7 @@
 
         function nextWord() {
             currentIndex++;
-            if (currentIndex < currentLevel.words.length) {
+            if (currentIndex < currentLevelWords.length) {
                 showWord();
             } else {
                 completeLevel();
