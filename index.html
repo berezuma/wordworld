@@ -45,104 +45,118 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <div id="app" class="max-w-4xl mx-auto">
-        <!-- RESPONSIVE HEADER -->
-        <header class="flex flex-col items-center gap-4 mb-8 md:block md:relative text-center">
-            <div class="order-2 md:order-1">
-                <h1 class="text-4xl md:text-5xl font-bold text-blue-600 drop-shadow-sm mb-1 md:mb-2">Word World</h1>
-                <p class="text-blue-400 font-semibold tracking-wide uppercase text-xs md:text-sm">Spelling Adventure</p>
-            </div>
-            
-            <!-- Global Score Display (Resets on reload) -->
-            <div class="order-1 md:order-2 md:absolute md:top-0 md:right-0 bg-white px-4 py-2 rounded-2xl shadow-md border-2 border-yellow-400 min-w-[100px]">
-                <span class="text-gray-500 text-[10px] md:text-xs font-bold block uppercase leading-none mb-1">Session Points</span>
-                <span id="global-score-display" class="text-xl md:text-2xl font-black text-yellow-600 leading-none">0</span>
-            </div>
-        </header>
+    <div id="app" class="max-w-4xl mx-auto flex flex-col min-h-[90vh]">
+        <div class="flex-grow">
+            <!-- RESPONSIVE HEADER -->
+            <header class="flex flex-col items-center gap-4 mb-8 md:block md:relative text-center">
+                <div class="order-2 md:order-1">
+                    <h1 class="text-4xl md:text-5xl font-bold text-blue-600 drop-shadow-sm mb-1 md:mb-2">Word World</h1>
+                    <p class="text-blue-400 font-semibold tracking-wide uppercase text-xs md:text-sm">Spelling Adventure</p>
+                </div>
+                
+                <!-- Global Score Display (Resets on reload) -->
+                <div class="order-1 md:order-2 md:absolute md:top-0 md:right-0 bg-white px-4 py-2 rounded-2xl shadow-md border-2 border-yellow-400 min-w-[100px]">
+                    <span class="text-gray-500 text-[10px] md:text-xs font-bold block uppercase leading-none mb-1">Session Points</span>
+                    <span id="global-score-display" class="text-xl md:text-2xl font-black text-yellow-600 leading-none">0</span>
+                </div>
+            </header>
 
-        <!-- MODE SELECTION -->
-        <div id="mode-selection" class="flex flex-col md:flex-row gap-6 justify-center items-stretch mt-8 md:mt-12 bounce-in">
-            <button onclick="setPlayMode('adventure')" class="flex-1 bg-white p-6 md:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all border-4 border-transparent hover:border-blue-500 group">
-                <div class="text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">🗺️</div>
-                <h3 class="text-xl md:text-2xl font-bold text-blue-600 mb-2">Adventure Mode</h3>
-                <p class="text-sm md:text-base text-gray-500">Step by step. Unlock worlds by playing!</p>
-            </button>
-            <button onclick="setPlayMode('free')" class="flex-1 bg-white p-6 md:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all border-4 border-transparent hover:border-green-500 group">
-                <div class="text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">🚀</div>
-                <h3 class="text-xl md:text-2xl font-bold text-green-600 mb-2">Free Ride</h3>
-                <p class="text-sm md:text-base text-gray-500">No limits. Practice any level you want!</p>
-            </button>
-        </div>
-
-        <!-- DASHBOARD CONTAINER -->
-        <div id="dashboard-container" class="hidden space-y-6">
-            <div class="flex justify-start">
-                <button onclick="resetToModeSelection()" class="bg-white/50 hover:bg-white text-blue-600 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
-                    </svg>
-                    Switch Game Mode
+            <!-- MODE SELECTION -->
+            <div id="mode-selection" class="flex flex-col md:flex-row gap-6 justify-center items-stretch mt-8 md:mt-12 bounce-in">
+                <button onclick="setPlayMode('adventure')" class="flex-1 bg-white p-6 md:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all border-4 border-transparent hover:border-blue-500 group">
+                    <div class="text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">🗺️</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-blue-600 mb-2">Adventure Mode</h3>
+                    <p class="text-sm md:text-base text-gray-500">Step by step. Unlock worlds by playing!</p>
+                </button>
+                <button onclick="setPlayMode('free')" class="flex-1 bg-white p-6 md:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all border-4 border-transparent hover:border-green-500 group">
+                    <div class="text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">🚀</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-green-600 mb-2">Free Ride</h3>
+                    <p class="text-sm md:text-base text-gray-500">No limits. Practice any level you want!</p>
                 </button>
             </div>
 
-            <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
-                <!-- Levels generated dynamically -->
-            </div>
-        </div>
-
-        <!-- GAME SCREEN -->
-        <div id="game-screen" class="hidden bounce-in">
-            <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-10 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-gray-100">
-                    <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-500 w-0"></div>
-                </div>
-
-                <div class="flex justify-between items-center mb-10 mt-4">
-                    <button onclick="showDashboard()" class="text-gray-400 hover:text-red-400 transition-colors flex items-center gap-2 font-bold">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg> Back
-                    </button>
-                    <div id="level-title" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-[10px] md:text-sm font-bold uppercase tracking-wider truncate max-w-[150px] md:max-w-none">Level 1</div>
-                    <div id="counter" class="text-blue-500 font-bold text-sm md:text-base">1 / 10</div>
-                </div>
-
-                <div class="flex flex-col items-center py-6 md:py-10">
-                    <button onclick="playCurrentAudio()" class="group relative bg-blue-500 hover:bg-blue-600 p-8 md:p-10 rounded-full shadow-lg transition-all active:scale-95 mb-8">
-                        <div class="absolute inset-0 rounded-full animate-ping bg-blue-400 opacity-20 group-hover:hidden"></div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 md:h-16 md:w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 18v-6a9 9 0 0118 0v6M3 18a2 2 0 01-2-2v-3a2 2 0 012-2h3a2 2 0 012 2v3a2 2 0 01-2 2H3zm18 0a2 2 0 002-2v-3a2 2 0 00-2-2h-3a2 2 0 00-2 2v3a2 2 0 002 2h3z" />
+            <!-- DASHBOARD CONTAINER -->
+            <div id="dashboard-container" class="hidden space-y-6">
+                <div class="flex justify-start">
+                    <button onclick="resetToModeSelection()" class="bg-white/50 hover:bg-white text-blue-600 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
                         </svg>
+                        Switch Game Mode
                     </button>
+                </div>
 
-                    <div id="practice-area" class="text-center w-full">
-                        <h2 id="word-display" class="text-5xl md:text-7xl font-bold text-blue-800 mb-8 tracking-tighter uppercase break-all">---</h2>
-                        <button onclick="nextWord()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white px-10 py-4 rounded-2xl font-bold text-xl shadow-lg transition-all">Next Word</button>
+                <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
+                    <!-- Levels generated dynamically -->
+                </div>
+            </div>
+
+            <!-- GAME SCREEN -->
+            <div id="game-screen" class="hidden bounce-in">
+                <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-10 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gray-100">
+                        <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-500 w-0"></div>
                     </div>
 
-                    <div id="test-area" class="hidden w-full max-w-md text-center">
-                        <input type="text" id="answer-input" autocomplete="off" 
-                            class="w-full text-3xl md:text-4xl text-center p-4 border-b-8 border-blue-200 focus:border-blue-500 focus:outline-none uppercase bg-transparent text-blue-900 placeholder-blue-100 transition-colors mb-6" 
-                            placeholder="Type here...">
-                        <button id="check-btn" onclick="checkAnswer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl text-2xl shadow-xl transition-all active:translate-y-1">
-                            Check!
+                    <div class="flex justify-between items-center mb-10 mt-4">
+                        <button onclick="showDashboard()" class="text-gray-400 hover:text-red-400 transition-colors flex items-center gap-2 font-bold">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg> Back
                         </button>
+                        <div id="level-title" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-[10px] md:text-sm font-bold uppercase tracking-wider truncate max-w-[150px] md:max-w-none">Level 1</div>
+                        <div id="counter" class="text-blue-500 font-bold text-sm md:text-base">1 / 10</div>
                     </div>
 
-                    <div id="feedback" class="mt-8 h-10 text-xl md:text-2xl font-bold flex items-center gap-2"></div>
+                    <div class="flex flex-col items-center py-6 md:py-10">
+                        <button onclick="playCurrentAudio()" class="group relative bg-blue-500 hover:bg-blue-600 p-8 md:p-10 rounded-full shadow-lg transition-all active:scale-95 mb-8">
+                            <div class="absolute inset-0 rounded-full animate-ping bg-blue-400 opacity-20 group-hover:hidden"></div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 md:h-16 md:w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 18v-6a9 9 0 0118 0v6M3 18a2 2 0 01-2-2v-3a2 2 0 012-2h3a2 2 0 012 2v3a2 2 0 01-2 2H3zm18 0a2 2 0 002-2v-3a2 2 0 00-2-2h-3a2 2 0 00-2 2v3a2 2 0 002 2h3z" />
+                            </svg>
+                        </button>
+
+                        <div id="practice-area" class="text-center w-full">
+                            <h2 id="word-display" class="text-5xl md:text-7xl font-bold text-blue-800 mb-8 tracking-tighter uppercase break-all">---</h2>
+                            <button onclick="nextWord()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white px-10 py-4 rounded-2xl font-bold text-xl shadow-lg transition-all">Next Word</button>
+                        </div>
+
+                        <div id="test-area" class="hidden w-full max-w-md text-center">
+                            <input type="text" id="answer-input" autocomplete="off" 
+                                class="w-full text-3xl md:text-4xl text-center p-4 border-b-8 border-blue-200 focus:border-blue-500 focus:outline-none uppercase bg-transparent text-blue-900 placeholder-blue-100 transition-colors mb-6" 
+                                placeholder="Type here...">
+                            <button id="check-btn" onclick="checkAnswer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl text-2xl shadow-xl transition-all active:translate-y-1">
+                                Check!
+                            </button>
+                        </div>
+
+                        <div id="feedback" class="mt-8 h-10 text-xl md:text-2xl font-bold flex items-center gap-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTS SCREEN -->
+            <div id="result-screen" class="hidden text-center bounce-in bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+                <div class="text-7xl md:text-9xl mb-6">🎉</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">Level Complete!</h2>
+                <p id="result-text" class="text-gray-500 text-lg md:text-xl mb-8">You have learned all the words in this level.</p>
+                <div class="flex flex-col gap-4">
+                    <button onclick="showDashboard()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl text-xl shadow-lg">Back to World Map</button>
                 </div>
             </div>
         </div>
 
-        <!-- RESULTS SCREEN -->
-        <div id="result-screen" class="hidden text-center bounce-in bg-white rounded-3xl shadow-2xl p-8 md:p-10">
-            <div class="text-7xl md:text-9xl mb-6">🎉</div>
-            <h2 class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">Level Complete!</h2>
-            <p id="result-text" class="text-gray-500 text-lg md:text-xl mb-8">You have learned all the words in this level.</p>
-            <div class="flex flex-col gap-4">
-                <button onclick="showDashboard()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl text-xl shadow-lg">Back to World Map</button>
-            </div>
-        </div>
+        <!-- FOOTER -->
+        <footer class="mt-12 py-8 border-t border-blue-200 text-center text-[10px] md:text-xs text-gray-500 space-y-4">
+            <p>
+                &copy; 2026 <a href="https://berezuma.com" target="_blank" class="underline hover:text-blue-600">Beñat Erezuma</a> (berezuma.com). 
+                This work is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" class="underline hover:text-blue-600">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p class="max-w-2xl mx-auto leading-relaxed">
+                This website is hosted on GitHub Pages. Please be aware that GitHub may collect server logs including IP addresses for security and maintenance purposes. 
+                For more information, please refer to the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" class="underline hover:text-blue-600">GitHub Privacy Statement</a>.
+            </p>
+        </footer>
     </div>
 
     <audio id="audio-player"></audio>
@@ -162,12 +176,12 @@
         ];
 
         let currentPlayMode = null; 
-        let currentLevelWords = []; // Randomly shuffled words for the active session
+        let currentLevelWords = []; 
         let currentLevel = null;
         let currentIndex = 0;
         let currentMode = ''; 
         let unlockedLevels = parseInt(localStorage.getItem('unlockedLevels')) || 1;
-        let globalScore = 0; // Resets on load
+        let globalScore = 0; 
         const audioPath = './audios/';
 
         function shuffleArray(array) {
@@ -241,7 +255,6 @@
 
         function startGame(levelId, mode) {
             currentLevel = levels.find(l => l.id === levelId);
-            // Randomize words for this specific session
             currentLevelWords = shuffleArray(currentLevel.words);
             currentMode = mode;
             currentIndex = 0;
